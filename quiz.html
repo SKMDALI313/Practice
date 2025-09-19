@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Quiz - Test Your Knowledge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .timer-pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .option-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .option-hover:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .selected-option {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    
+    <!-- Navigation Bar -->
+    <nav class="gradient-bg shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="text-3xl">🤖</div>
+                    <span class="text-white text-xl font-bold">AI Quiz</span>
+                </div>
+                <div class="text-white text-sm hidden sm:block">
+                    Test Your Knowledge
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home-page" class="min-h-screen">
+        <div class="container mx-auto px-4 py-16">
+            <!-- Hero Section -->
+            <div class="text-center mb-16 fade-in">
+                <h1 class="text-5xl md:text-7xl font-bold text-gray-800 mb-6">
+                    Welcome to <span class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">AI Quiz</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto">
+                    Challenge yourself with our interactive quiz featuring artificial intelligence and technology questions. Test your knowledge and learn something new!
+                </p>
+            </div>
+
+            <!-- Central Banner -->
+            <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8 md:p-12 text-center fade-in">
+                <div class="mb-8">
+                    <div class="text-6xl mb-6">🧠</div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Ready to Start?</h2>
+                    <p class="text-gray-600 text-lg mb-8">Answer 10 questions about AI and technology in 15 seconds each</p>
+                </div>
+
+                <!-- Quiz Info -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4">
+                        <div class="text-2xl font-bold text-blue-600">10</div>
+                        <div class="text-gray-700 text-sm">Questions</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-xl p-4">
+                        <div class="text-2xl font-bold text-green-600">15s</div>
+                        <div class="text-gray-700 text-sm">Per Question</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4">
+                        <div class="text-2xl font-bold text-purple-600">AI & Tech</div>
+                        <div class="text-gray-700 text-sm">Topics</div>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button onclick="startQuiz()" class="w-full md:w-auto bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-12 rounded-2xl text-xl transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                    Start Quiz 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Page -->
+    <div id="quiz-page" class="hidden min-h-screen">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Progress Bar -->
+            <div class="max-w-4xl mx-auto mb-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-gray-700 font-medium">Progress</span>
+                        <div class="flex items-center space-x-4">
+                            <span id="question-counter" class="text-purple-600 font-bold">1 of 10</span>
+                            <div id="timer" class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold timer-pulse">15s</div>
+                        </div>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div id="progress-bar" class="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full progress-bar" style="width: 10%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="max-w-4xl mx-auto">
+                <div id="question-card" class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 slide-in">
+                    <h2 id="question-text" class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 leading-relaxed text-center"></h2>
+                    
+                    <div id="options-container" class="space-y-4 mb-8">
+                        <!-- Options will be inserted here -->
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+                        <button id="prev-btn" onclick="previousQuestion()" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105" disabled>
+                            ← Previous
+                        </button>
+                        
+                        <div class="text-center">
+                            <div id="time-warning" class="text-red-500 font-medium text-sm opacity-0 transition-opacity duration-300">
+                                Time's running out! ⏰
+                            </div>
+                        </div>
+                        
+                        <button id="next-btn" onclick="nextQuestion()" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105" disabled>
+                            Next →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Page -->
+    <div id="result-page" class="hidden min-h-screen py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-8 md:p-12 text-center">
+                <!-- Result Header -->
+                <div class="mb-8 bounce-in">
+                    <div id="result-icon" class="text-8xl mb-6">🎉</div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Quiz Complete!</h1>
+                    <p class="text-gray-600 text-lg">Here's how you performed</p>
+                </div>
+
+                <!-- Score Display -->
+                <div class="mb-8 bounce-in" style="animation-delay: 0.3s;">
+                    <div class="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl p-8 mb-6">
+                        <div id="score-display" class="text-6xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">0/10</div>
+                        <div id="percentage-display" class="text-2xl font-semibold text-gray-700">0%</div>
+                        <div class="text-gray-600 mt-2">Your Final Score</div>
+                    </div>
+                    
+                    <!-- Detailed Stats -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-green-100 rounded-xl p-6">
+                            <div id="correct-count" class="text-3xl font-bold text-green-600">0</div>
+                            <div class="text-green-700 font-medium">Correct</div>
+                        </div>
+                        <div class="bg-red-100 rounded-xl p-6">
+                            <div id="wrong-count" class="text-3xl font-bold text-red-600">0</div>
+                            <div class="text-red-700 font-medium">Wrong</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Message -->
+                <div id="performance-message" class="mb-8 p-4 rounded-xl fade-in" style="animation-delay: 0.6s;">
+                    <!-- Message will be inserted here -->
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-4 fade-in" style="animation-delay: 0.9s;">
+                    <button onclick="retryQuiz()" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-2xl text-lg transform hover:scale-105 transition-all duration-300 shadow-lg">
+                        Retry Quiz 🔄
+                    </button>
+                    <button onclick="goHome()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-4 px-8 rounded-2xl text-lg transition-all duration-300 transform hover:scale-105">
+                        Go Home 🏠
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data - AI and Technology Questions
+        const quizData = [
+            {
+                question: "What does 'AI' stand for?",
+                options: ["Automated Intelligence", "Artificial Intelligence", "Advanced Integration", "Algorithmic Interface"],
+                correct: 1
+            },
+            {
+                question: "Who is considered the father of Artificial Intelligence?",
+                options: ["Alan Turing", "John McCarthy", "Marvin Minsky", "Herbert Simon"],
+                correct: 1
+            },
+            {
+                question: "Which of these is a type of machine learning?",
+                options: ["Supervised Learning", "Social Learning", "Emotional Learning", "Creative Learning"],
+                correct: 0
+            },
+            {
+                question: "What does 'GPU' stand for in computing?",
+                options: ["General Processing Unit", "Graphics Processing Unit", "Global Processing Unit", "Gigabyte Processing Unit"],
+                correct: 1
+            },
+            {
+                question: "Which company developed the ChatGPT AI model?",
+                options: ["Google", "Microsoft", "OpenAI", "Meta"],
+                correct: 2
+            },
+            {
+                question: "What is the term for AI that can understand and learn any intellectual task that a human can?",
+                options: ["Narrow AI", "General AI", "Super AI", "Weak AI"],
+                correct: 1
+            },
+            {
+                question: "Which programming language is most commonly used for machine learning?",
+                options: ["JavaScript", "C++", "Python", "Java"],
+                correct: 2
+            },
+            {
+                question: "What does 'IoT' stand for?",
+                options: ["Internet of Things", "Integration of Technology", "Interface of Tools", "Intelligence of Things"],
+                correct: 0
+            },
+            {
+                question: "Which technique is used to train neural networks?",
+                options: ["Forward Propagation", "Backpropagation", "Side Propagation", "Reverse Engineering"],
+                correct: 1
+            },
+            {
+                question: "What is the main purpose of a neural network?",
+                options: ["Store data", "Pattern recognition", "Web browsing", "File compression"],
+                correct: 1
+            }
+        ];
+
+        // Quiz State Variables
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let score = 0;
+        let timer = 15;
+        let timerInterval;
+        let isAnswerSelected = false;
+
+        // Page Navigation Functions
+        function showPage(pageId) {
+            document.querySelectorAll('#home-page, #quiz-page, #result-page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
+        function startQuiz() {
+            currentQuestion = 0;
+            userAnswers = [];
+            score = 0;
+            isAnswerSelected = false;
+            showPage('quiz-page');
+            loadQuestion();
+        }
+
+        function goHome() {
+            clearInterval(timerInterval);
+            showPage('home-page');
+        }
+
+        function retryQuiz() {
+            clearInterval(timerInterval);
+            startQuiz();
+        }
+
+        // Timer Functions
+        function startTimer() {
+            timer = 15;
+            document.getElementById('timer').textContent = `${timer}s`;
+            document.getElementById('timer').className = "bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold";
+            document.getElementById('time-warning').style.opacity = '0';
+            
+            timerInterval = setInterval(() => {
+                timer--;
+                document.getElementById('timer').textContent = `${timer}s`;
+                
+                if (timer <= 5) {
+                    document.getElementById('timer').className = "bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold timer-pulse";
+                    document.getElementById('time-warning').style.opacity = '1';
+                } else if (timer <= 10) {
+                    document.getElementById('timer').className = "bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-bold";
+                }
+                
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    if (!isAnswerSelected) {
+                        userAnswers[currentQuestion] = -1; // Mark as unanswered
+                    }
+                    setTimeout(() => {
+                        if (currentQuestion < quizData.length - 1) {
+                            nextQuestion();
+                        } else {
+                            finishQuiz();
+                        }
+                    }, 500);
+                }
+            }, 1000);
+        }
+
+        // Question Loading and Management
+        function loadQuestion() {
+            isAnswerSelected = false;
+            clearInterval(timerInterval);
+            
+            const question = quizData[currentQuestion];
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('question-counter').textContent = `${currentQuestion + 1} of ${quizData.length}`;
+            
+            // Update progress bar
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            // Load options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                const isSelected = userAnswers[currentQuestion] === index;
+                
+                optionDiv.innerHTML = `
+                    <label class="flex items-center p-4 border-2 rounded-2xl cursor-pointer option-hover transition-all duration-300 ${isSelected ? 'selected-option border-purple-500' : 'border-gray-200 hover:border-purple-300 hover:bg-purple-50'}">
+                        <input type="radio" name="answer" value="${index}" class="mr-4 text-purple-600 scale-150" ${isSelected ? 'checked' : ''} onchange="selectAnswer(${index})">
+                        <span class="text-lg font-medium ${isSelected ? 'text-white' : 'text-gray-700'}">${String.fromCharCode(65 + index)}. ${option}</span>
+                    </label>
+                `;
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            
+            const nextBtn = document.getElementById('next-btn');
+            if (currentQuestion === quizData.length - 1) {
+                nextBtn.textContent = 'Finish Quiz ✅';
+            } else {
+                nextBtn.textContent = 'Next →';
+            }
+            
+            nextBtn.disabled = userAnswers[currentQuestion] === undefined;
+
+            // Add slide animation to question card
+            const questionCard = document.getElementById('question-card');
+            questionCard.classList.remove('slide-in');
+            void questionCard.offsetWidth; // Trigger reflow
+            questionCard.classList.add('slide-in');
+
+            // Start timer
+            startTimer();
+        }
+
+        function selectAnswer(answerIndex) {
+            isAnswerSelected = true;
+            userAnswers[currentQuestion] = answerIndex;
+            document.getElementById('next-btn').disabled = false;
+            
+            // Update visual selection
+            document.querySelectorAll('#options-container label').forEach((label, index) => {
+                const span = label.querySelector('span');
+                if (index === answerIndex) {
+                    label.className = 'flex items-center p-4 border-2 rounded-2xl cursor-pointer option-hover transition-all duration-300 selected-option border-purple-500';
+                    span.className = 'text-lg font-medium text-white';
+                } else {
+                    label.className = 'flex items-center p-4 border-2 rounded-2xl cursor-pointer option-hover transition-all duration-300 border-gray-200 hover:border-purple-300 hover:bg-purple-50';
+                    span.className = 'text-lg font-medium text-gray-700';
+                }
+            });
+        }
+
+        function nextQuestion() {
+            clearInterval(timerInterval);
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function previousQuestion() {
+            clearInterval(timerInterval);
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            
+            // Calculate score
+            score = 0;
+            for (let i = 0; i < quizData.length; i++) {
+                if (userAnswers[i] === quizData[i].correct) {
+                    score++;
+                }
+            }
+
+            showPage('result-page');
+            displayResults();
+        }
+
+        function displayResults() {
+            const percentage = Math.round((score / quizData.length) * 100);
+            const wrongAnswers = quizData.length - score;
+            
+            // Animate score display
+            let currentScore = 0;
+            const scoreAnimation = setInterval(() => {
+                if (currentScore <= score) {
+                    document.getElementById('score-display').textContent = `${currentScore}/${quizData.length}`;
+                    document.getElementById('percentage-display').textContent = `${Math.round((currentScore / quizData.length) * 100)}%`;
+                    currentScore++;
+                } else {
+                    clearInterval(scoreAnimation);
+                }
+            }, 100);
+
+            document.getElementById('correct-count').textContent = score;
+            document.getElementById('wrong-count').textContent = wrongAnswers;
+
+            // Performance message and icon
+            const resultIcon = document.getElementById('result-icon');
+            const performanceMessage = document.getElementById('performance-message');
+            
+            if (percentage >= 90) {
+                resultIcon.textContent = '🏆';
+                performanceMessage.innerHTML = '<div class="bg-yellow-100 text-yellow-800 rounded-xl p-4"><strong>Outstanding!</strong> You\'re an AI expert! 🌟</div>';
+            } else if (percentage >= 80) {
+                resultIcon.textContent = '🎉';
+                performanceMessage.innerHTML = '<div class="bg-green-100 text-green-800 rounded-xl p-4"><strong>Excellent!</strong> You have great knowledge about AI! 👏</div>';
+            } else if (percentage >= 70) {
+                resultIcon.textContent = '👍';
+                performanceMessage.innerHTML = '<div class="bg-blue-100 text-blue-800 rounded-xl p-4"><strong>Good job!</strong> You\'re on the right track! 💪</div>';
+            } else if (percentage >= 50) {
+                resultIcon.textContent = '📚';
+                performanceMessage.innerHTML = '<div class="bg-orange-100 text-orange-800 rounded-xl p-4"><strong>Not bad!</strong> Keep learning about AI! 🤓</div>';
+            } else {
+                resultIcon.textContent = '🔄';
+                performanceMessage.innerHTML = '<div class="bg-red-100 text-red-800 rounded-xl p-4"><strong>Keep trying!</strong> Practice makes perfect! 💫</div>';
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('home-page');
+        });
+    </script>
+</body>
+</html>
